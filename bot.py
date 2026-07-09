@@ -2,7 +2,7 @@ import random as r
 import numpy as np
 
 class HeuristicBot:
-    def __init__(self, color=1):
+    def __init__(self, color=-1):
         self.color = color
 
     def evaluate_move(self, board, row, col, engine):
@@ -25,11 +25,9 @@ class HeuristicBot:
             neighbor_tile = board[n_row][n_col]
 
             if neighbor_tile == 1:
-                score += 8
+                score += getattr(self, 'aggression_weight', 8.0)
             elif neighbor_tile == self.color:
-                score += 5
-            else:
-                pass
+                score += getattr(self, 'defense_weight', 5.0)
         
         return score
     

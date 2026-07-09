@@ -128,7 +128,3 @@ class GoEngine:
 
         self.current_player = -self.current_player
         return True
-
-
-    
-

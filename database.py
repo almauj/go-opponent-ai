@@ -1,0 +1,81 @@
+
+import sqlite3 as sq
+from datetime import datetime 
+
+DB_NAME = "go_analytics.db"
+
+def init_db():
+    """Creates database if not exists"""
+    conn = sq.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS game_history (
+            game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT,
+            board_size INTEGER,
+            winner TEXT,
+            total_moves INTEGER,
+            bot_stones INTEGER,
+            player_stones INTEGER,
+            bot_captures INTEGER,
+            player_captures INTEGER
+            )
+         """)
+    
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS bot_traits (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            agression REAL,
+            defense REAL
+            )
+        """)
+    
+    # handles empty traits
+    cursor.execute("SELECT COUNT(*) FROM bot_traits")
+    if cursor.fetchone()[0] == 0:
+        cursor.execute("INSERT INTO bot_traits (aggression, defense) VALUES (8.0, 5.0)")
+    
+    conn.commit()
+    conn.close()
+
+def get_bot_traits():
+    """Retrieves current traits for bot"""
+    conn = sq.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT aggression, defense FROM bot_traits ORDER BY id DESC LIMIT 1")
+    row = cursor.fetchone()
+    conn.close()
+    return row if row else (8.0, 5.0)
+
+def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures):
+    """ Logs a new row of data from a completed game to the database and updates bot's traits dynamically.
+    """
+    conn = sq.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    query = "INSERT INTO game_history (timestamp, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+
+    cursor.execute(query, (current_time, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures))
+
+
+    # ---- Bot Trait Adjustmant ----
+    cursor.execute("SELECT aggression, defense FROM bot_traits ORDER BY id DESC LIMIT 1")
+    curr_def, curr_agg = cursor.fetchone()
+    if winner.lower() == 'player':
+        if player_captures > bot_captures:
+            curr_def += 0.5 
+        if player_captures < bot_captures:
+            curr_agg += 0.5
+
+        cursor.execute("INSERT INTO bot_traits (aggression, defense) VALUES (?, ?)", (curr_agg, curr_def))
+        print(f"Bot adapted behavior! Aggression = {curr_agg}, Defense = {curr_def}")
+
+    conn.commit()
+    conn.close()
+    print("Game data successfully logged into database.")
+    
+
