@@ -111,10 +111,11 @@ while running:
 
     # --- Bot Turn ----
     if engine.current_player == -1 and running:
-        pg.time.wait(200) # rest delay
+        pg.time.wait(400) # rest delay
         bot_choice = bot.get_move(engine)
         if bot_choice:
-            if engine.take_turn(bot_choice[0], bot_choice[1]):
+            b_row, b_col = bot_choice
+            if engine.take_turn(b_row, b_col):
                 total_moves_played += 1
                 print(f"Bot placed stone at: {bot_choice}")
         else:

@@ -1,4 +1,5 @@
-import random as r
+
+import random as rd
 import numpy as np
 
 class HeuristicBot:
@@ -60,4 +61,4 @@ class HeuristicBot:
                     else:
                         pass
 
-        return r.choice(best_moves) if best_moves else None
+        return rd.choice(best_moves) if best_moves else None

@@ -26,7 +26,7 @@ def init_db():
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS bot_traits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            agression REAL,
+            aggression REAL,
             defense REAL
             )
         """)

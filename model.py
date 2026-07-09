@@ -107,15 +107,19 @@ class GoEngine:
 
         # ----- capturing opponent's stone(s) -----
         new_neighbors = self.get_neighbors(row, col)
-
         opponent = -self.current_player
+
+        processed_groups = []
 
         for (n_row, n_col) in new_neighbors:
             if self.board[n_row][n_col] == opponent:
-
                 opponent_group = self.find_group(n_row, n_col)
+                
+                if opponent_group in processed_groups:
+                    continue
 
                 if self.count_liberties(opponent_group) == 0:
+                    processed_groups.append(opponent_group)
 
                     for (o_row, o_col) in opponent_group:
                         self.board[o_row][o_col] = 0
@@ -130,7 +134,6 @@ class GoEngine:
 
         # ---- illegal move -----
         player_group = self.find_group(row, col)
-
         if self.count_liberties(player_group) == 0:
             self.board[row][col] = 0
             return False
