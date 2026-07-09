@@ -75,31 +75,31 @@ class GoEngine:
 
         return len(liberties)
     
-        def is_legal_move(self, row, col, player):
-            """Validates legal moves"""
-            # if space is captures
-            if self.board[row][col] != 0:
-                return False
+    def is_legal_move(self, row, col, player):
+        """Validates legal moves"""
+        # if space is captures
+        if self.board[row][col] != 0:
+            return False
             
-            opponent = -player
-            neighbors = self.get_neighbors(row, col)
+        opponent = -player
+        neighbors = self.get_neighbors(row, col)
         
-            for n_row, n_col in neighbors:
-                # open space
-                if self.board[n_row][n_col] == 0:
-                    return True
+        for n_row, n_col in neighbors:
+            # open space
+            if self.board[n_row][n_col] == 0:
+                return True
                 
                 # friendly connection
-                    if self.board[n_row][n_col] == player:
-                        friendly_group = self.find_group(n_row, n_col)
-                        if self.count_liberties(friendly_group) > 1:
-                            return True
+            if self.board[n_row][n_col] == player:
+                friendly_group = self.find_group(n_row, n_col)
+                if self.count_liberties(friendly_group) > 1:
+                    return True
                     
                 # capture
-                if self.board[n_row][n_col] == opponent:
-                    opp_group = self.find_group(n_row, n_col)
-                    if self.count_liberties(opp_group) == 1:
-                        return True
+            if self.board[n_row][n_col] == opponent:
+                opp_group = self.find_group(n_row, n_col)
+                if self.count_liberties(opp_group) == 1:
+                    return True
                     
             return False
 
