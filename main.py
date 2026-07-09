@@ -120,6 +120,7 @@ while running:
                 print(f"Bot placed stone at: {bot_choice}")
         else:
             # force skip if no moves available
+            print("Bot has no legal moves left.")
             engine.current_player = 1
 
 

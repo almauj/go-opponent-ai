@@ -48,17 +48,18 @@ class HeuristicBot:
         for r in range(engine.size):
             for c in range(engine.size):
                 if board[r][c] == 0: # empty space
-                    move_score = self.evaluate_move(board, r, c, engine)
+                    if engine.is_legal_move(r, c, self.color):
+                        move_score = self.evaluate_move(board, r, c, engine)
 
-                    if move_score > best_score:
-                        best_score = move_score
-                        best_moves.clear()
-                        best_moves.append((r, c))
+                        if move_score > best_score:
+                            best_score = move_score
+                            best_moves.clear()
+                            best_moves.append((r, c))
 
-                    elif move_score == best_score:
-                        best_moves.append((r, c))
+                        elif move_score == best_score:
+                            best_moves.append((r, c))
 
-                    else:
-                        pass
+                        else:
+                            pass
 
         return rd.choice(best_moves) if best_moves else None

@@ -18,20 +18,15 @@ class GoEngine:
 
             Returns: Neighbors - List of valid (r, c) tuples directly around current given position.
         """
-
         neighbors = []
-
         directions = [(1,0), (0,1), (-1,0), (0,-1)]
-
         for drows, dcols in directions:
             r = row + drows
             c = col + dcols
-
             if (0 <= r < self.size) and (0 <= c < self.size):
                 neighbors.append((r,c))
         
         return neighbors
-        # print(neighbors)
 
     def find_group(self, start_row, start_column):
         """ Finds all stones of the same color vertically or horizontally.
@@ -40,7 +35,6 @@ class GoEngine:
 
             Return: Group - set of coordinates/positions with row and column values
         """
-
         color = self.board[start_row][start_column]
 
         # empty spaces
@@ -49,15 +43,11 @@ class GoEngine:
         
         group = set()
         queue = [(start_row, start_column)]
-
         while queue:
             curr_r, curr_c = queue.pop(0)
-
             if (curr_r, curr_c) not in group:
                 group.add((curr_r, curr_c))
-
                 neighbors = self.get_neighbors(curr_r, curr_c)
-
                 for n_row, n_col in neighbors:
                     if (n_row, n_col) not in group and self.board[n_row][n_col] == color:
                         queue.append((n_row, n_col)) 
@@ -84,6 +74,35 @@ class GoEngine:
                     liberties.add((n_row, n_col))
 
         return len(liberties)
+    
+        def is_legal_move(self, row, col, player):
+            """Validates legal moves"""
+            # if space is captures
+            if self.board[row][col] != 0:
+                return False
+            
+            opponent = -player
+            neighbors = self.get_neighbors(row, col)
+        
+            for n_row, n_col in neighbors:
+                # open space
+                if self.board[n_row][n_col] == 0:
+                    return True
+                
+                # friendly connection
+                    if self.board[n_row][n_col] == player:
+                        friendly_group = self.find_group(n_row, n_col)
+                        if self.count_liberties(friendly_group) > 1:
+                            return True
+                    
+                # capture
+                if self.board[n_row][n_col] == opponent:
+                    opp_group = self.find_group(n_row, n_col)
+                    if self.count_liberties(opp_group) == 1:
+                        return True
+                    
+            return False
+
     
     def is_board_full(self):
         """Returns true if there are no open spaces left on the board"""
