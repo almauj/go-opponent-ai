@@ -70,9 +70,12 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
             curr_def += 0.5 
         if player_captures < bot_captures:
             curr_agg += 0.5
+    else:
+        curr_agg = max(1.0, curr_agg - 0.1)
+        curr_def = max(1.0, curr_def - 0.1)
 
-        cursor.execute("INSERT INTO bot_traits (aggression, defense) VALUES (?, ?)", (curr_agg, curr_def))
-        print(f"Bot adapted behavior! Aggression = {curr_agg}, Defense = {curr_def}")
+    cursor.execute("INSERT INTO bot_traits (aggression, defense) VALUES (?, ?)", (curr_agg, curr_def))
+    print(f"Bot adapted behavior - {winner} Win. Personality is now -> Aggression = {curr_agg}, Defense = {curr_def}")
 
     conn.commit()
     conn.close()

@@ -8,6 +8,8 @@ class GoEngine:
         # 0 = empty, 1 = black, -1 = white
         self.board = np.zeros((size, size), dtype=int)
         self.current_player = 1
+        self.player_captures = 0
+        self.bot_captures = 0
 
     def get_neighbors(self, row, col):
         """ Checks boundaries and opponents.
@@ -83,6 +85,10 @@ class GoEngine:
 
         return len(liberties)
     
+    def is_board_full(self):
+        """Returns true if there are no open spaces left on the board"""
+        return not np.any(self.board == 0)
+    
     def take_turn(self, row, col):
         """Executes a move and handles turns (player switching)
 
@@ -112,9 +118,14 @@ class GoEngine:
                 if self.count_liberties(opponent_group) == 0:
 
                     for (o_row, o_col) in opponent_group:
-                        
                         self.board[o_row][o_col] = 0
-                pass
+
+                        if self.current_player == 1:
+                            self.player_captures += 1
+
+                        elif self.current_player == -1:
+                            self.bot_captures += 1
+                
 
 
         # ---- illegal move -----
