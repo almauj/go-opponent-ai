@@ -25,7 +25,7 @@ class GoEngine:
             r = row + drows
             c = col + dcols
 
-            if (0 <= r <= self.size) and (0 <= c <= self.size):
+            if (0 <= r < self.size) and (0 <= c < self.size):
                 neighbors.append((r,c))
         
         return neighbors
@@ -79,7 +79,7 @@ class GoEngine:
             for (n_row, n_col) in neighbors:
 
                 if (n_row, n_col) not in liberties and self.board[n_row][n_col] == 0:
-                    liberties.add(n_row, n_col)
+                    liberties.add((n_row, n_col))
 
         return len(liberties)
     
@@ -126,7 +126,7 @@ class GoEngine:
                 
         # opponent switching
 
-        self.current_player = opponent
+        self.current_player = -self.current_player
         return True
 
 

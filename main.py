@@ -31,24 +31,27 @@ def draw_board():
 
     # game board
     screen.fill(TAN)
-    pos_count = CELL_SIZE
 
-    while pos_count < BOARD_SIZE:
-        pg.draw.line(screen, BLACK, (pos_count, CELL_SIZE), (0, BOARD_SIZE), 1) # vertical
-        pg.draw.line(screen, BLACK, (0, BOARD_SIZE), (pos_count, CELL_SIZE), 1) # horizontal
+    for i in range(BOARD_SIZE):
+        offset = (i + 1) * CELL_SIZE
+        pg.draw.line(screen, BLACK, (offset, CELL_SIZE), (offset, BOARD_SIZE * CELL_SIZE), 2) # vertical
+        pg.draw.line(screen, BLACK, (CELL_SIZE, offset), (BOARD_SIZE * CELL_SIZE, offset), 2) # horizontal
 
-        pos_count += CELL_SIZE
+
 
     
     # stones
+
     for i in range(0, engine.size):
         for j in range(0, engine.size):
             cell = engine.board[i][j]
+            pixel_x = (i + 1) * CELL_SIZE
+            pixel_y = (j + 1) * CELL_SIZE
 
             if cell == 1:
-                pg.draw.circle(screen, BLACK, (i, j), 10) # draw black
+                pg.draw.circle(screen, BLACK, (pixel_x, pixel_y), (CELL_SIZE // 2) - 2) # draw black
             elif cell == -1:
-                pg.draw.circle(screen, WHITE, (i, j), 10) # draw white
+                pg.draw.circle(screen, WHITE, (pixel_x, pixel_y), (CELL_SIZE // 2) - 2) # draw white
             else:
                 pass
             
@@ -65,12 +68,8 @@ while running:
         elif event.type == pg.MOUSEBUTTONDOWN:
             mouse_x, mouse_y = pg.mouse.get_pos()
 
-            row, col = 0
-            matrix_x = mouse_x // CELL_SIZE
-            matrix_y = mouse_y // CELL_SIZE
-
-            row += matrix_x
-            col += matrix_y
+            row = round((mouse_x - CELL_SIZE) / CELL_SIZE)
+            col = round((mouse_y - CELL_SIZE) / CELL_SIZE)
 
             if 0 <= row < BOARD_SIZE and 0 <= col < BOARD_SIZE:
                 move_successful = engine.take_turn(row, col)
