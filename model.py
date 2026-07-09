@@ -25,7 +25,7 @@ class GoEngine:
             r = row + drows
             c = col + dcols
 
-            if (0 <= r <= self.size) or (0 <= c <= self.size):
+            if (0 <= r <= self.size) and (0 <= c <= self.size):
                 neighbors.append((r,c))
         
         return neighbors
@@ -54,7 +54,7 @@ class GoEngine:
             if (curr_r, curr_c) not in group:
                 group.add((curr_r, curr_c))
 
-                neighbors = GoEngine.get_neighbors(curr_r, curr_c)
+                neighbors = self.get_neighbors(curr_r, curr_c)
 
                 for n_row, n_col in neighbors:
                     if (n_row, n_col) not in group and self.board[n_row][n_col] == color:
@@ -74,7 +74,7 @@ class GoEngine:
         liberties = set()
 
         for (row, col) in group:
-            neighbors = GoEngine.get_neighbors(row, col)
+            neighbors = self.get_neighbors(row, col)
 
             for (n_row, n_col) in neighbors:
 
@@ -103,26 +103,26 @@ class GoEngine:
         new_neighbors = self.get_neighbors(row, col)
 
         opponent = -self.current_player
-        opponent_group = GoEngine.find_group(n_row, n_col)
-        opponent_liberties = GoEngine.count_liberties(opponent_group)
 
         for (n_row, n_col) in new_neighbors:
             if self.board[n_row][n_col] == opponent:
-                if opponent_liberties == 0:
+
+                opponent_group = self.find_group(n_row, n_col)
+
+                if self.count_liberties(opponent_group) == 0:
+
                     for (o_row, o_col) in opponent_group:
+                        
                         self.board[o_row][o_col] = 0
                 pass
 
 
         # ---- illegal move -----
-        player_group = GoEngine.find_group(n_row, n_col)
-        player_liberties = GoEngine.count_liberties(player_group)
+        player_group = self.find_group(row, col)
 
-        for (n_row, n_col) in new_neighbors:
-            if self.board[n_row][n_col] == self.current_player:
-                if player_liberties == 0:
-                    self.board[n_row][n_col] = 0
-                    return False
+        if self.count_liberties(player_group) == 0:
+            self.board[row][col] = 0
+            return False
                 
         # opponent switching
 
