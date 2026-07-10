@@ -188,7 +188,9 @@ pg.quit()
 if not force_quit_no_log:
     final_player_stones = int(np.sum(engine.board == 1))
     final_bot_stones = int(np.sum(engine.board == -1))
-    game_winner = 'Player' if final_player_stones > final_bot_stones else 'Bot'
+    
+    if 'game_winner' not in locals():
+        game_winner = 'Player' if final_player_stones > final_bot_stones else 'Bot'
 
     # extract board pixels and pixel conversion to bytes
     board_rect = pg.Rect(0, 0, BOARD_VIEW_SIZE, WINDOW_HEIGHT)
