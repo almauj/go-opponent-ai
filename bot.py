@@ -19,17 +19,25 @@ class HeuristicBot:
         """
 
         score = 0
-
+        opponent = -self.color
         neighbors = engine.get_neighbors(row,col)
 
+        # local scoring
         for n_row, n_col in neighbors:
             neighbor_tile = board[n_row][n_col]
-
             if neighbor_tile == 1:
                 score += getattr(self, 'aggression_weight', 8.0)
             elif neighbor_tile == self.color:
                 score += getattr(self, 'defense_weight', 5.0)
         
+        # venture scoring
+        center = engine.size // 2 
+        distance_from_center = abs(row - center) + abs(col - center)
+        closeness_to_center = 8 - distance_from_center
+
+        venture_coefficient = getattr(self, 'venture_weight', 1.5)
+        score += closeness_to_center * venture_coefficient
+
         return score
     
     def get_move(self, engine):

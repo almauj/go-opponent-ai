@@ -27,14 +27,15 @@ def init_db():
         CREATE TABLE IF NOT EXISTS bot_traits (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             aggression REAL,
-            defense REAL
+            defense REAL,
+            venture REAL
             )
         """)
     
     # handles empty traits
     cursor.execute("SELECT COUNT(*) FROM bot_traits")
     if cursor.fetchone()[0] == 0:
-        cursor.execute("INSERT INTO bot_traits (aggression, defense) VALUES (8.0, 5.0)")
+        cursor.execute("INSERT INTO bot_traits (aggression, defense, venture) VALUES (8.0, 5.0, 1.5)")
     
     conn.commit()
     conn.close()
@@ -44,10 +45,10 @@ def get_bot_traits():
     conn = sq.connect(DB_NAME)
     cursor = conn.cursor()
 
-    cursor.execute("SELECT aggression, defense FROM bot_traits ORDER BY id DESC LIMIT 1")
+    cursor.execute("SELECT aggression, defense, venture FROM bot_traits ORDER BY id DESC LIMIT 1")
     row = cursor.fetchone()
     conn.close()
-    return row if row else (8.0, 5.0)
+    return row if row else (8.0, 5.0, 1.5)
 
 def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures):
     """ Logs a new row of data from a completed game to the database and updates bot's traits dynamically.
@@ -56,26 +57,26 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
     cursor = conn.cursor()
 
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
     query = "INSERT INTO game_history (timestamp, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-
     cursor.execute(query, (current_time, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures))
 
 
     # ---- Bot Trait Adjustmant ----
     cursor.execute("SELECT aggression, defense FROM bot_traits ORDER BY id DESC LIMIT 1")
-    curr_def, curr_agg = cursor.fetchone()
+    curr_def, curr_agg, curr_ven = cursor.fetchone()
     if winner.lower() == 'player':
         if player_captures > bot_captures:
-            curr_def += 0.5 
+            curr_def += 0.1 
         if player_captures < bot_captures:
-            curr_agg += 0.5
+            curr_agg += 0.1
+            curr_ven += 0.2
     else:
         curr_agg = max(1.0, curr_agg - 0.1)
         curr_def = max(1.0, curr_def - 0.1)
+        curr_ven = max(0.5, curr_ven - 0.1)
 
-    cursor.execute("INSERT INTO bot_traits (aggression, defense) VALUES (?, ?)", (curr_agg, curr_def))
-    print(f"Bot adapted behavior - {winner} Win. Personality is now -> Aggression = {curr_agg}, Defense = {curr_def}")
+    cursor.execute("INSERT INTO bot_traits (aggression, defense, venture) VALUES (?, ?, ?)", (curr_agg, curr_def, curr_ven))
+    print(f"Bot adapted behavior - {winner} Win. Personality is now -> Aggression = {curr_agg}, Defense = {curr_def}, Venture = {curr_ven}")
 
     conn.commit()
     conn.close()

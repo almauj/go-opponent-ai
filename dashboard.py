@@ -51,4 +51,4 @@ else:
     # Bot personality evolution
     st.write("### Bot Personality Evolution By Traits")
     if not df_traits.empty:
-        st.line_chart(df_traits[['aggression', 'defense']])
+        st.line_chart(df_traits[['aggression', 'defense', 'venture']])

@@ -45,10 +45,11 @@ clock = pg.time.Clock()
 engine = GoEngine(size=BOARD_SIZE)
 
 # bot configurations
-bot_agg, bot_def = get_bot_traits()
+bot_agg, bot_def, bot_ven = get_bot_traits()
 bot = HeuristicBot(color=-1)
 bot.aggression_weight = bot_agg 
 bot.defense_weight = bot_def
+bot.venture_weight = bot_ven
 
 def draw_board():
     """ Draws Game Grid and Stones. 
