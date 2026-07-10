@@ -149,7 +149,7 @@ while running:
             player_total_advantage = (final_player_stones + engine.player_captures)
             bot_total_advantage = (final_bot_stones + engine.bot_captures)
             
-            if total_moves_played > 20 and (player_total_advantage - bot_total_advantage) > 25:
+            if total_moves_played > 50 and (player_total_advantage - bot_total_advantage) > 25:
                 print("Bot analyzes board state and determines defeat is inevitable. Bot Resigns.")
                 status_msg = "Bot Resigns!"
                 game_winner = 'Player'

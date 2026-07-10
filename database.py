@@ -82,7 +82,7 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
         curr_def = max(1.0, curr_def - 0.1)
         curr_ven = max(0.5, curr_ven - 0.1)
 
-    cursor.execute("INSERT INTO bot_traits (id aggression, defense, venture) VALUES (?, ?, ?, ?)", (new_game_id, curr_agg, curr_def, curr_ven))
+    cursor.execute("INSERT INTO bot_traits (id, aggression, defense, venture) VALUES (?, ?, ?, ?)", (new_game_id, curr_agg, curr_def, curr_ven))
     print(f"Bot adapted behavior - {winner} Win. Personality is now -> Aggression = {curr_agg}, Defense = {curr_def}, Venture = {curr_ven}")
 
     conn.commit()
