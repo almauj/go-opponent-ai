@@ -26,18 +26,17 @@ def init_db():
     
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS bot_traits (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            id INTEGER REFERENCES game_history(game_id),
             aggression REAL,
             defense REAL,
             venture REAL
             )
         """)
     
-    # handles empty traits
     cursor.execute("SELECT COUNT(*) FROM bot_traits")
     if cursor.fetchone()[0] == 0:
-        cursor.execute("INSERT INTO bot_traits (aggression, defense, venture) VALUES (8.0, 5.0, 1.5)")
-    
+        cursor.execute("INSERT INTO bot_traits (id, aggression, defense, venture) VALUES (0, 8.0, 5.0, 1.5)")
+
     conn.commit()
     conn.close()
 
@@ -65,19 +64,25 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
 
     # ---- Bot Trait Adjustmant ----
     cursor.execute("SELECT aggression, defense, venture FROM bot_traits ORDER BY id DESC LIMIT 1")
-    curr_agg, curr_def, curr_ven = cursor.fetchone()
+    row = cursor.fetchone()
+    if row:
+        curr_agg, curr_def, curr_ven = row
+    else:
+        curr_agg, curr_def, curr_ven = (8.0, 5.0, 1.5)
+    
     if winner.lower() == 'player':
         if player_captures > bot_captures:
             curr_def += 0.1 
+            curr_ven += 0.5
         else: 
             curr_agg += 0.1
-            curr_ven += 0.1
+            curr_ven += 0.3
     else:
         curr_agg = max(1.0, curr_agg - 0.1)
         curr_def = max(1.0, curr_def - 0.1)
         curr_ven = max(0.5, curr_ven - 0.1)
 
-    cursor.execute("INSERT INTO bot_traits (aggression, defense, venture) VALUES (?, ?, ?)", (curr_agg, curr_def, curr_ven))
+    cursor.execute("INSERT INTO bot_traits (id aggression, defense, venture) VALUES (?, ?, ?, ?)", (new_game_id, curr_agg, curr_def, curr_ven))
     print(f"Bot adapted behavior - {winner} Win. Personality is now -> Aggression = {curr_agg}, Defense = {curr_def}, Venture = {curr_ven}")
 
     conn.commit()

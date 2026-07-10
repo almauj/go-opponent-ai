@@ -93,7 +93,7 @@ def draw_board():
         
         pg.draw.rect(screen, DARK_GRAY, quit_dashboard_rect, 0, 5)
         pg.draw.line(screen, BLACK, (BOARD_VIEW_SIZE + 15, 280), (BOARD_VIEW_SIZE + 165, 280), 1)
-        screen.blit(font.render("Quit & Dashboard", True, WHITE), (BOARD_VIEW_SIZE + 22, 292))
+        screen.blit(font.render("Quit Game", True, WHITE), (BOARD_VIEW_SIZE + 22, 292))
 
     # stones
     for i in range(0, engine.size):
@@ -137,7 +137,7 @@ while running:
 
         # check for resignation
         if not engine.has_any_legal_moves(player=-1):
-            status_msg = "Bot has no legal moves left. Bot resigns."
+            status_msg = "Bot Resigns!"
             game_over = True
             game_winner = 'Player'
         
@@ -151,7 +151,7 @@ while running:
             
             if total_moves_played > 20 and (player_total_advantage - bot_total_advantage) > 25:
                 print("Bot analyzes board state and determines defeat is inevitable. Bot Resigns.")
-                status_msg = "Bot thinks defeat is inevitable and resigns."
+                status_msg = "Bot Resigns!"
                 game_winner = 'Player'
                 game_over = True
 
@@ -241,6 +241,6 @@ pg.quit()
 
 if not force_quit_no_log:
     print("Launching Streamlit performance dashboard...")
-    subprocess.Popen(["streamlit", "run", "dashboard.py"])
+    subprocess.Popen(["streamlit", "run", "dashboard.py", "--server.headless", "true"])
 
 sys.exit()

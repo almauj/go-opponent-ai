@@ -44,7 +44,7 @@ else:
         
     with chart_col2:
         st.write("### Capture Trends Over Time")
-        chart_data = df[['player_captures'], ['bot_captures']]
+        chart_data = df[['player_captures', 'bot_captures']]
         st.line_chart(chart_data)
     
     st.markdown("---")
