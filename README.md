@@ -86,6 +86,7 @@ streamlit run dashboard.py
 ## 🔮 Future Upgrades
 
 I will admit there is still lots of room for improvement as far as integrating more of the rules of Go and strategies that come with it. But as I get better, I plan to keep upgrading this project:
-[ ] **Computer Vision**: Train a Convolutional Neural Network (CNN) directly on the final board image BLOBs saved in my database to recognize winning board shapes.
-[ ] **Go Strategy Mapping**: Build coordinate checkers into the analytics engine to log advanced shapes (like *Kosumi*, *Nobi*, or opening *Joseki* patterns).
-[ ] **Look-Ahead Search (MCTS)**: Upgrade the bot with a Monte Carlo Tree Search so it can simulate future moves 3 steps ahead instead of just reacting to its immediate turn.
+* **Enhanced Declustering**: While the bot improved its moves with my initial attempt to decluster, it still clusters toward the center, so I will be doing more research to see different ways to resolve this.
+* **Computer Vision**: Train a Convolutional Neural Network (CNN) directly on the final board image BLOBs saved in my database to recognize winning board shapes.
+* **Go Strategy Mapping**: Build coordinate checkers into the analytics engine to log advanced shapes (like *Kosumi*, *Nobi*, or opening *Joseki* patterns).
+* **Look-Ahead Search (MCTS)**: Upgrade the bot with a Monte Carlo Tree Search so it can simulate future moves 3 steps ahead instead of just reacting to its immediate turn.
