@@ -64,14 +64,14 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
     new_game_id = cursor.lastrowid
 
     # ---- Bot Trait Adjustmant ----
-    cursor.execute("SELECT aggression, defense FROM bot_traits ORDER BY id DESC LIMIT 1")
-    curr_def, curr_agg, curr_ven = cursor.fetchone()
+    cursor.execute("SELECT aggression, defense, venture FROM bot_traits ORDER BY id DESC LIMIT 1")
+    curr_agg, curr_def, curr_ven = cursor.fetchone()
     if winner.lower() == 'player':
         if player_captures > bot_captures:
             curr_def += 0.1 
-        if player_captures < bot_captures:
+        else: 
             curr_agg += 0.1
-            curr_ven += 0.2
+            curr_ven += 0.1
     else:
         curr_agg = max(1.0, curr_agg - 0.1)
         curr_def = max(1.0, curr_def - 0.1)
@@ -83,5 +83,4 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
     conn.commit()
     conn.close()
     print("Game data and final board image were successfully logged into database.")
-    
     return new_game_id

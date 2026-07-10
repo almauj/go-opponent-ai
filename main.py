@@ -132,7 +132,7 @@ while running:
         game_winner = 'Player' if final_player_stones > final_bot_stones else 'Bot'
 
     # --- Bot Turn ----
-    if engine.current_player == -1 and running:
+    if engine.current_player == -1 and running and not game_over:
         pg.time.wait(400) # rest delay
 
         # check for resignation
@@ -155,20 +155,20 @@ while running:
                 game_winner = 'Player'
                 game_over = True
 
-        bot_choice = bot.get_move(engine)
-        if bot_choice:
-            b_row, b_col = bot_choice
-            if engine.take_turn(b_row, b_col):
-                total_moves_played += 1
-                print(f"Bot placed stone at: {bot_choice}")
-        else:
-            # force skip if no moves available
-            print("Bot has no legal moves left.")
-            engine.current_player = 1
+        if not game_over:
+            bot_choice = bot.get_move(engine)
+            if bot_choice:
+                b_row, b_col = bot_choice
+                if engine.take_turn(b_row, b_col):
+                    total_moves_played += 1
+                    print(f"Bot placed stone at: {bot_choice}")
+            else:
+                # force skip if no moves available
+                print("Bot has no legal moves left and passes.")
+                engine.current_player = 1
 
 
     for event in pg.event.get():
-
         if event.type == pg.QUIT:
             running = False
             force_quit_no_log = True

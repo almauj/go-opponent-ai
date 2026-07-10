@@ -19,7 +19,6 @@ class HeuristicBot:
         """
 
         score = 0
-        opponent = -self.color
         neighbors = engine.get_neighbors(row,col)
 
         # local scoring
