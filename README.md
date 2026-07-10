@@ -62,7 +62,7 @@ To make sure we both learn together, I programmed a bidirectional learning loop 
 ### Install Dependencies
 
 ```bash
-pip install pygame numpy streamlit pandas matplotlib
+pip install pygame numpy streamlit pandas 
 ```
 
 ### 1. Play a Match
