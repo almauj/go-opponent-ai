@@ -23,7 +23,7 @@ It is super important to emphasize that **this project was not a copy-paste job*
 
 ---
 
-## 🧠 Struggles, Debugging, and Breakthroughs
+## Struggles, Debugging, and Breakthroughs
 
 Here are the three biggest bugs I ran into, what was causing them, and how I fixed them:
 
@@ -83,7 +83,7 @@ streamlit run dashboard.py
 
 ---
 
-## 🔮 Future Upgrades
+## Future Upgrades
 
 I will admit there is still lots of room for improvement as far as integrating more of the rules of Go and strategies that come with it. But as I get better, I plan to keep upgrading this project:
 * **Enhanced Declustering**: While the bot improved its moves with my initial attempt to decluster, it still clusters toward the center, so I will be doing more research to see different ways to resolve this.
