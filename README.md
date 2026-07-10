@@ -37,13 +37,13 @@ Here are the three biggest bugs I ran into, what was causing them, and how I fix
 
 * **The Bug:** The bot only scanned for empty squares. It would routinely pick the highest-scoring spot on its scorecard, only for the engine to reject it because it was an illegal suicide move, causing the game turns to get out of sync.
 * **The Cause:** The bot didn't have a way to "preview" whether a move was actually legal before trying to play it on the live board.
-* **The Fix:** I created a concept called a **Single Source of Truth**. I added an `is_legal_move(row, col, player)` function inside the `GoEngine`. Now, before the bot scores an empty square, it asks the engine: *"Is this move suicide?"* If the engine says yes, the bot skips it entirely, completely preventing rule violations.
+* **The Fix:** I added an `is_legal_move(row, col, player)` function inside the `GoEngine`. Now, before the bot scores an empty square, it asks the engine: *"Is this move suicide?"* If the engine says yes, the bot skips it entirely, preventing rule violations.
 
 ### 3. Pygame's Window Lifecycle Crash
 
 * **The Bug:** I wanted to take a screenshot of the final board state at the end of each match and save it directly into the SQLite database as a binary `BLOB` asset (perfect for training a machine learning model later). But whenever the bot resigned or the game ended, it threw a `pygame.error: Surface is not initialized` crash.
-* **The Cause:** The game loop was hitting a `break` statement that instantly called `pg.quit()`. This completely destroyed the window out of the computer's memory a fraction of a millisecond before the database script could crop the screen.
-* **The Fix:** I rewrote the ending into a clean **Game Over State Handler**. When a resignation happens, the loop stays alive but sets a `game_over = True` flag. The script captures the board screenshot using an in-memory `io.BytesIO()` buffer and saves it to SQL **while the screen is wide open**. Only when I click the "Quit & Dashboard" button does the program safely shut down.
+* **The Cause:** The game loop was hitting a `break` statement that instantly called `pg.quit()`. This completely destroyed the window out of the computer's memory before the database script could crop the screen.
+* **The Fix:** I rewrote the ending into a clean **Game Over State Handler**. When a resignation happens, the loop stays alive but sets a `game_over = True` flag. The script captures the board screenshot using an in-memory `io.BytesIO()` buffer and saves it to SQL while the screen is open. Only when I click the "Quit" button does the program safely shut down.
 
 ---
 
@@ -75,7 +75,7 @@ python main.py
 
 ### 2. Open the Dashboard
 
-When the game ends, the sidebar will update with a **Quit** button. Clicking it safely logs your data, takes a final screenshot, closes the game, and automatically boots up your browser dashboard to show your win rate, capture trends, and your last played board!
+When the game ends, the sidebar will update with a **Quit** button. Clicking it safely logs your data, takes a final screenshot, closes the game, and automatically goes into the opens the Streamlit dashboard. Sometimes it doesn't take you directly to the browser, so you will have to click the local host link in the terminal if that is the case.
 
 ```bash
 streamlit run dashboard.py
