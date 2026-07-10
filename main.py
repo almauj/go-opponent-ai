@@ -114,6 +114,27 @@ while running:
     # --- Bot Turn ----
     if engine.current_player == -1 and running:
         pg.time.wait(400) # rest delay
+
+        # check for resignation
+        if not engine.has_any_legal_moves(player=-1):
+            print("Bot has no legal moves left. Bot resigns.")
+            game_winner = 'Player'
+            running = False
+            break
+
+        # check for mathematical defeat
+        final_player_stones = int(np.sum(engine.board == 1))
+        final_bot_stones = int(np.sum(engine.board == -1))
+
+        player_total_advantage = (final_player_stones + engine.player_captures)
+        bot_total_advantage = (final_bot_stones + engine.bot_captures)
+
+        if total_moves_played > 20 and (player_total_advantage - bot_total_advantage) > 25:
+            print("Bot analyzes board state and determines defeat is inevitable. Bot Resigns.")
+            game_winner = 'Player'
+            running = False
+            break
+
         bot_choice = bot.get_move(engine)
         if bot_choice:
             b_row, b_col = bot_choice

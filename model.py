@@ -102,6 +102,16 @@ class GoEngine:
                     return True
                     
             return False
+        
+    def has_any_legal_moves(self, player):
+        """ Scans the board to see if there is at least ONE empty intersection where the given player can legally place a stone.
+        """
+        for r in range(self.size):
+            for c in range(self.size):
+                if self.board[r][c] == 0:
+                    if self.is_legal_move(r, c, player):
+                        return True
+        return False
 
     
     def is_board_full(self):
