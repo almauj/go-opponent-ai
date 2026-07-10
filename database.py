@@ -19,7 +19,8 @@ def init_db():
             bot_stones INTEGER,
             player_stones INTEGER,
             bot_captures INTEGER,
-            player_captures INTEGER
+            player_captures INTEGER,
+            final_board_img BLOB
             )
          """)
     
@@ -50,16 +51,17 @@ def get_bot_traits():
     conn.close()
     return row if row else (8.0, 5.0, 1.5)
 
-def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures):
+def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures, image_bytes):
     """ Logs a new row of data from a completed game to the database and updates bot's traits dynamically.
     """
     conn = sq.connect(DB_NAME)
     cursor = conn.cursor()
 
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    query = "INSERT INTO game_history (timestamp, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
-    cursor.execute(query, (current_time, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures))
+    query = "INSERT INTO game_history (timestamp, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures, final_board_img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+    cursor.execute(query, (current_time, board_size, winner, total_moves, bot_stones, player_stones, bot_captures, player_captures, image_bytes))
 
+    new_game_id = cursor.lastrowid
 
     # ---- Bot Trait Adjustmant ----
     cursor.execute("SELECT aggression, defense FROM bot_traits ORDER BY id DESC LIMIT 1")
@@ -80,6 +82,6 @@ def log_game(board_size, winner, total_moves, bot_stones, player_stones, bot_cap
 
     conn.commit()
     conn.close()
-    print("Game data successfully logged into database.")
+    print("Game data and final board image were successfully logged into database.")
     
-
+    return new_game_id

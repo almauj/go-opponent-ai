@@ -2,6 +2,7 @@ import pygame as pg
 import numpy as np
 import subprocess
 import sys 
+import io
 
 from model import GoEngine
 from database import init_db, log_game, get_bot_traits
@@ -164,13 +165,20 @@ pg.quit()
 
 # --- post game data pipeline
 if not force_quit_no_log:
-
     final_player_stones = int(np.sum(engine.board == 1))
     final_bot_stones = int(np.sum(engine.board == -1))
-
     game_winner = 'Player' if final_player_stones > final_bot_stones else 'Bot'
 
-            # data pipeline
+    # extract board pixels and pixel conversion to bytes
+    board_rect = pg.Rect(0, 0, BOARD_VIEW_SIZE, WINDOW_HEIGHT)
+    board_surface = screen.subsurface(board_rect)
+
+    img_buffer = io.BytesIO()
+    pg.image.save(board_surface, img_buffer, "png") # saves to RAM buffer
+    raw_png_bytes = img_buffer.getvalue()
+    img_buffer.close()
+
+    # data pipeline
     log_game (
         board_size=BOARD_SIZE,
         winner=game_winner,
@@ -178,9 +186,11 @@ if not force_quit_no_log:
         bot_stones=final_bot_stones,
         player_stones=final_player_stones,
         bot_captures=engine.bot_captures,
-        player_captures=engine.player_captures
+        player_captures=engine.player_captures,
+        image_bytes=raw_png_bytes
         )
     
+
     print("Launching Streamlit performance dashboard...")
     subprocess.Popen(["streamlit", "run", "dashboard.py"])
 

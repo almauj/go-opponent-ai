@@ -48,7 +48,31 @@ else:
         st.line_chart(chart_data)
     
     st.markdown("---")
+
     # Bot personality evolution
     st.write("### Bot Personality Evolution By Traits")
     if not df_traits.empty:
         st.line_chart(df_traits[['aggression', 'defense', 'venture']])
+
+    st.markdown("---")
+    # Final board screenshot
+    
+    st.write("### Last Match Terminal Board State")
+    
+    if 'final_board_img' in df.columns and not df['final_board_img'].isna().all():
+        latest_game = df.sort_values(by='game_id', ascending=False).iloc[0]
+        binary_image_blob = latest_game['final_board_img']
+        
+        # Verify that the blob contains real bytes data
+        if binary_image_blob:
+            layout_left, layout_right = st.columns([1, 2])
+            with layout_left:
+                st.image(binary_image_blob, caption=f"Game #{latest_game['game_id']} Final Layout State", width=400)
+            with layout_right:
+                st.write(f"**Match Played on:** {latest_game['timestamp']}")
+                st.write(f"**Outcome:** {latest_game['winner']} Victory")
+                st.write(f"**Stones Left Standing:** You: {latest_game['player_stones']} | Bot: {latest_game['bot_stones']}")
+        else:
+            st.warning("The latest logged match entry does not contain valid image asset data.")
+    else:
+        st.info("No visual board snapshots found in the database yet.")
